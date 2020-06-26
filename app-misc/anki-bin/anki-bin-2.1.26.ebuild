@@ -3,6 +3,8 @@
 
 EAPI=7
 
+inherit xdg-utils
+
 dir="anki-${PV}-linux-amd64"
 
 DESCRIPTION="A spaced-repetition memory training program (flash cards)"
