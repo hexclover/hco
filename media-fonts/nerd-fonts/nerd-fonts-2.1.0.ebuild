@@ -4,7 +4,8 @@
 EAPI=7
 inherit font
 
-DESCRIPTION="A collection of patched popular programming fonts with additional glyphs"
+# TODO: add USEs
+DESCRIPTION="A collection of patched popular programming fonts with additional glyphs (huge package!)"
 HOMEPAGE="https://github.com/ryanoasis/nerd-fonts"
 SRC_URI="
     https://github.com/ryanoasis/nerd-fonts/releases/download/v${PV}/3270.zip
