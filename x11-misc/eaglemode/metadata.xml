@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM 'http://www.gentoo.org/dtd/metadata.dtd'>
+<pkgmetadata>
+    <maintainer type="person">
+        <email>47456195+hexclover@users.noreply.github.com</email>
+        <name>0xCLOVER</name>
+    </maintainer>
+    <use>
+        <flag name="freetype">Build font2em tool</flag>
+        <flag name="vlc">Enable vlc as audio/video backend</flag>
+        <flag name="xine">Enable xine as audio/video backend</flag>
+    </use>
+</pkgmetadata>
