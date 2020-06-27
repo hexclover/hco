@@ -11,9 +11,7 @@ LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64"
 
-MY_PN="eaglemode"
-
-SRC_URI="mirror://sourceforge/${MY_PN}/${MY_PN}-${PV}/${MY_PN}-${PV}.tar.bz2"
+SRC_URI="mirror://sourceforge/${PN}/${PN}-${PV}/${PN}-${PV}.tar.bz2"
 
 IUSE="doc freetype jpeg pdf png +postscript svg tiff vlc xine"
 
@@ -75,7 +73,7 @@ src_compile() {
 }
 
 src_install() {
-	local em_dir="/usr/lib/${MY_PN}"
+	local em_dir="/usr/lib/${PN}"
 	perl make.pl install dir="${em_dir}" root="${ED}" menu=yes bin=no || die
 
 	cd "${ED}/${em_dir}"
@@ -85,7 +83,7 @@ src_install() {
 	fi
 
 	for siz in 32 48 96; do
-		doicon ./res/icons/"${MY_PN}${siz}".png -s ${siz}
+		doicon ./res/icons/"${PN}${siz}".png -s ${siz}
 	done
 	mv res "${ED}"/usr/share/eaglemode || die
 	dosym /usr/share/eaglemode "${em_dir}"/res
