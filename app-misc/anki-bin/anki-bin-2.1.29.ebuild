@@ -3,15 +3,15 @@
 
 EAPI=7
 
-inherit xdg-utils
+inherit xdg-utils desktop
 
-dir="anki-${PV}-linux-amd64"
+MY_P="anki-${PV}-linux-amd64"
 
 DESCRIPTION="A spaced-repetition memory training program (flash cards)"
 HOMEPAGE="https://apps.ankiweb.net"
-SRC_URI="https://github.com/ankitects/anki/releases/download/${PV}/${DIR}.tar.bz2 -> ${P}.tar.bz2"
+SRC_URI="https://github.com/ankitects/anki/releases/download/${PV}/${MY_P}.tar.bz2"
 
-S="${WORKDIR}/${dir}"
+S="${WORKDIR}/${MY_P}"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -35,11 +35,17 @@ src_compile() {
 }
 
 src_install() {
-	local opt="${ED}/opt/${PN}"
-	local opt_sed="$(echo ${opt} | sed s/\\//\\\\\\//g)"
-	sed -i "s/PREFIX=\\/usr\\/local/PREFIX=${opt_sed}/" Makefile
-	make install
-	dosym "${opt}/bin/anki" /usr/bin/anki
+	dir="${ED}"/opt/${PN}
+	mkdir -p "${dir}"
+	doicon anki.xpm
+	doicon anki.png
+	domenu anki.desktop
+	doman anki.1
+	insinto /usr/share/mime/packages
+	doins anki.xml
+	rm anki.{xpm,png,desktop,1} || die
+	cp -a * "${dir}"
+	dosym "${dir}/bin/anki" /usr/bin/anki
 }
 
 pkg_postinst() {
