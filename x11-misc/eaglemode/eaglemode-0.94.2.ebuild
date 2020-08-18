@@ -18,8 +18,7 @@ IUSE="doc freetype jpeg pdf png +postscript svg tiff vlc xine"
 BDEPEND="
 	>=dev-lang/perl-5.8
 "
-# TODO: DEPENDs or RDEPENDs?
-# TODO: is x11-terms/xterm a dependency?
+
 DEPEND="
 	x11-libs/libX11
 	freetype? ( media-libs/freetype )
@@ -35,6 +34,8 @@ DEPEND="
 	tiff? ( media-libs/tiff )
 	xine? ( media-libs/xine-lib )
 "
+RDEPEND="${DEPEND}
+${BDEPEND}"
 
 use_em() {
 	default
