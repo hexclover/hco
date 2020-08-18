@@ -3,7 +3,7 @@
 
 EAPI=7
 
-MY_PV="37.0_13.0_0_1"
+MY_PV="37.0_13.0_0_2"
 
 DESCRIPTION="Emoji annotation files in CLDR"
 HOMEPAGE="https://github.com/fujiwarat/cldr-emoji-annotation"
