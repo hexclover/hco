@@ -17,6 +17,12 @@ DEPEND="app-arch/unzip"
 
 RESTRICT="binchecks mirror strip"
 
-S=${WORKDIR}
-FONT_S=( "${S}/Inter Desktop" )
+S="${WORKDIR}"
+FONT_S=( "${S}" )
 FONT_SUFFIX="otf"
+
+src_unpack() {
+	unpack ${A}
+
+	mv "${S}/Inter Desktop"/*."${FONT_SUFFIX}" "${FONT_S}" || die
+}
