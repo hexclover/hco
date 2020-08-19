@@ -1,13 +1,14 @@
 # hco
 
-My personal Gentoo overlay, use at your own risk.
+Personal Gentoo overlay. Use at your own risk.
 
 ## Packages
 
-Some packages in this overlay:
+Some useful packages to myself:
 
-- Fonts:
+- Fonts, for example:
   - `hanazono-mincho`
   - `nerd-fonts` (HUGE package, be careful!)
+- `app-i18n/mozc-ut`
 - `app-misc/anki-bin`
 - `x11-misc/eaglemode`
