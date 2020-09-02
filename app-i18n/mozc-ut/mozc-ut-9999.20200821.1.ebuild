@@ -9,7 +9,7 @@ inherit elisp-common multiprocessing python-any-r1 toolchain-funcs git-r3
 EGIT_REPO_URI="https://github.com/fcitx/mozc"
 EGIT_SUBMODULES=(src/third_party/japanese_usage_dictionary)
 
-UT_V="20200718.1"
+UT_V="${P#${PN}-[^.]*.}"
 UT_PF="mozcdic-ut-${UT_V}"
 
 MY_PN="mozc"
