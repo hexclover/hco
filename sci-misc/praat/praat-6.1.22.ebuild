@@ -16,11 +16,11 @@ SRC_URI="https://github.com/praat/praat/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 IUSE="pulseaudio"
 
 BDEPEND=""
-DEPEND="dev-libs/atk
-x11-libs/gtk+:2
-x11-libs/pango
-media-libs/alsa-lib
-pulseaudio? ( media-sound/pulseaudio )
+DEPEND="
+	x11-libs/gtk+:2
+	x11-libs/pango
+	media-libs/alsa-lib
+	pulseaudio? ( media-sound/pulseaudio )
 "
 RDEPEND="${DEPEND}"
 
