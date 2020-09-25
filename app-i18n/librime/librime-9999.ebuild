@@ -47,7 +47,7 @@ src_prepare() {
 	sed -e "/\${PROJECT_SOURCE_DIR}\/thirdparty/d" -i CMakeLists.txt || die
 	rm -r thirdparty || die
 
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -67,5 +67,5 @@ src_configure() {
 		-DLIB_INSTALL_DIR="${EPREFIX}/usr/$(get_libdir)"
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }
