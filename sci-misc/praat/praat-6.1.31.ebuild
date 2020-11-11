@@ -17,8 +17,7 @@ IUSE="pulseaudio"
 
 BDEPEND=""
 DEPEND="
-	x11-libs/gtk+:2
-	x11-libs/pango
+	x11-libs/gtk+:3
 	media-libs/alsa-lib
 	pulseaudio? ( media-sound/pulseaudio )
 "
