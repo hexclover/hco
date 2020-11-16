@@ -202,6 +202,7 @@ SRC_URI="
 	https://github.com/gmg137/netease-cloud-music-gtk/archive/${PV}.tar.gz -> ${PN}-${PV}.tar.gz
 	$(cargo_crate_uris ${CRATES})
 "
+LICENSE="Apache-2.0 Apache-2.0-with-LLVM-exceptions BSD BSD-2 Boost-1.0 CC0-1.0 GPL-3+ GPL-3 MIT MPL-2.0 Unlicense ZLIB"
 SLOT="0"
 IUSE="libressl"
 KEYWORDS="~amd64"
