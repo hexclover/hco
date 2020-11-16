@@ -1,0 +1,37 @@
+--- /src/gyp/common/gypi
++++ /src/gyp/common.gypi
+@@ -122,12 +122,6 @@
+         'compiler_host': 'clang',
+         'compiler_host_version_int': 304,  # Clang 3.4 or higher
+       }],
+-      ['target_platform=="Linux"', {
+-        'compiler_target': 'clang',
+-        'compiler_target_version_int': 304,  # Clang 3.4 or higher
+-        'compiler_host': 'clang',
+-        'compiler_host_version_int': 304,  # Clang 3.4 or higher
+-      }],
+     ],
+   },
+   'target_defaults': {
+@@ -213,6 +207,10 @@
+           ['compiler_target=="clang" or compiler_target=="gcc"', {
+             'cflags_cc': [
+               '-std=c++17',
++            ],
++          }],
++          ['compiler_target=="clang"', {
++            'cflags_cc': [
+               '-stdlib=libc++',
+             ],
+           }],
+@@ -233,6 +231,10 @@
+           ['compiler_host=="clang" or compiler_host=="gcc"', {
+             'cflags_cc': [
+               '-std=c++17',
++            ],
++          }],
++          ['compiler_target=="clang"', {
++            'cflags_cc': [
+               '-stdlib=libc++',
+             ],
+           }],

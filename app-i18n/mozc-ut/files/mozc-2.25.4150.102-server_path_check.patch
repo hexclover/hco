@@ -2,7 +2,7 @@ https://github.com/google/mozc/issues/471
 
 --- /src/ipc/ipc_path_manager.cc
 +++ /src/ipc/ipc_path_manager.cc
-@@ -332,9 +332,21 @@
+@@ -339,9 +339,21 @@
      return false;
    }
  
@@ -25,7 +25,7 @@ https://github.com/google/mozc/issues/471
    }
  
    server_pid_ = 0;
-@@ -344,17 +356,17 @@
+@@ -351,17 +363,17 @@
    {
      std::wstring expected_server_ntpath;
      const std::map<string, std::wstring>::const_iterator it =
@@ -48,7 +48,7 @@ https://github.com/google/mozc/issues/471
        }
      }
  
-@@ -371,9 +383,9 @@
+@@ -379,9 +390,9 @@
        return false;
      }
  
@@ -60,16 +60,16 @@ https://github.com/google/mozc/issues/471
      server_pid_ = pid;
    }
  #endif  // OS_WIN
-@@ -399,7 +411,7 @@
+@@ -406,7 +418,7 @@
  #ifdef OS_LINUX
    // load from /proc/<pid>/exe
    char proc[128];
 -  char filename[512];
 +  char filename[PATH_MAX];
-   snprintf(proc, sizeof(proc) - 1, "/proc/%u/exe", pid);
+   absl::SNPrintF(proc, sizeof(proc) - 1, "/proc/%u/exe", pid);
    const ssize_t size = readlink(proc, filename, sizeof(filename) - 1);
    if (size == -1) {
-@@ -412,18 +424,18 @@
+@@ -419,18 +431,18 @@
    server_pid_ = pid;
  #endif  // OS_LINUX
  

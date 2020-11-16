@@ -13,7 +13,7 @@ UT_V="${P#${PN}-[^.]*.}"
 UT_PF="mozcdic-ut-${UT_V}"
 
 MY_PN="mozc"
-DESCRIPTION="Mozc + UT Dictionary + Fcitx5 support"
+DESCRIPTION="Mozc + UT Dictionary"
 HOMEPAGE="https://github.com/fcitx/mozc http://linuxplayers.g1.xrea.com/mozc-ut.html https://github.com/google/mozc"
 
 # From mozc::gentoo
@@ -26,8 +26,8 @@ LICENSE="BSD BSD-2 ipadic public-domain unicode"
 LICENSE+=" CC-BY-SA-3.0 Apache-2.0 public-domain"
 SLOT="0"
 KEYWORDS=""
-IUSE="debug emacs fcitx +gui +handwriting-tegaki handwriting-tomoe ibus renderer test"
-REQUIRED_USE="|| ( emacs fcitx ibus ) gui? ( ^^ ( handwriting-tegaki handwriting-tomoe ) ) !gui? ( !handwriting-tegaki !handwriting-tomoe )"
+IUSE="debug emacs fcitx5 +gui ibus renderer test"
+REQUIRED_USE="|| ( emacs fcitx5 ibus )"
 RESTRICT="!test? ( test )"
 
 SRC_URI="https://osdn.net/users/utuhiro/pf/utuhiro/dl/${UT_PF}.tar.bz2"
@@ -38,21 +38,19 @@ BDEPEND="${PYTHON_DEPS}
 	dev-util/ninja
 	virtual/pkgconfig
 	emacs? ( app-editors/emacs:* )
-	fcitx? ( sys-devel/gettext )"
-RDEPEND=">=dev-libs/protobuf-3.0.0:=
-	!app-i18n/mozc
+	fcitx5? ( sys-devel/gettext )"
+RDEPEND="!app-i18n/mozc
+	>=dev-cpp/abseil-cpp-20200923.2[cxx17]
+	>=dev-libs/protobuf-3.0.0:=
 	emacs? ( app-editors/emacs:* )
-	fcitx? (
+	fcitx5? (
 		app-i18n/fcitx5
 		virtual/libintl
 	)
 	gui? (
-		app-i18n/zinnia
 		dev-qt/qtcore:5
 		dev-qt/qtgui:5
 		dev-qt/qtwidgets:5
-		handwriting-tegaki? ( app-i18n/tegaki-zinnia-japanese )
-		handwriting-tomoe? ( app-i18n/zinnia-tomoe )
 	)
 	ibus? (
 		>=app-i18n/ibus-1.4.1
@@ -88,18 +86,11 @@ src_unpack() {
 }
 
 src_prepare() {
-	eapply -p2 "${FILESDIR}/mozc-2.23.2815.102-python-3_1.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.23.2815.102-python-3_2.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.23.2815.102-python-3_3.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.23.2815.102-python-3_4.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.23.2815.102-system_libraries.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.23.2815.102-gcc-8.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.23.2815.102-protobuf_generated_classes_no_inheritance.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.23.2815.102-environmental_variables.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.23.2815.102-reiwa.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.23.2815.102-server_path_check.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.20.2673.102-tests_build.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.20.2673.102-tests_skipping.patch"
+	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-system_libraries.patch"
+	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-environmental_variables.patch"
+	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-server_path_check.patch"
+	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-tests_skipping.patch"
+	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-use-custom-toolchain.patch"
 
 	rm -r unix/fcitx || die
 
@@ -166,22 +157,16 @@ src_configure() {
 	fi
 
 	gyp_arguments+=(-D use_fcitx=NO)
-	gyp_arguments+=(-D use_fcitx5=$(usex fcitx YES NO))
+	gyp_arguments+=(-D use_fcitx5=$(usex fcitx5 YES NO))
+	gyp_arguments+=(-D use_libabseilcpp=1)
 	gyp_arguments+=(-D use_libgtest=$(usex test 1 0))
 	gyp_arguments+=(-D use_libibus=$(usex ibus 1 0))
 	gyp_arguments+=(-D use_libjsoncpp=$(usex test 1 0))
 	gyp_arguments+=(-D use_libprotobuf=1)
-	gyp_arguments+=(-D use_libzinnia=$(usex gui 1 0))
 	gyp_arguments+=(-D enable_gtk_renderer=$(usex renderer 1 0))
 
 	gyp_arguments+=(-D server_dir="${EPREFIX}/usr/libexec/mozc")
 	gyp_arguments+=(-D document_dir="${EPREFIX}/usr/libexec/mozc/documents")
-
-	if use handwriting-tegaki; then
-		gyp_arguments+=(-D zinnia_model_file="${EPREFIX}/usr/share/tegaki/models/zinnia/handwriting-ja.model")
-	elif use handwriting-tomoe; then
-		gyp_arguments+=(-D zinnia_model_file="${EPREFIX}/usr/$(get_libdir)/zinnia/model/tomoe/handwriting-ja.model")
-	fi
 
 	if use ibus; then
 		gyp_arguments+=(-D ibus_mozc_path="${EPREFIX}/usr/libexec/ibus-engine-mozc")
@@ -203,7 +188,7 @@ src_compile() {
 	if use emacs; then
 		targets+=(unix/emacs/emacs.gyp:mozc_emacs_helper)
 	fi
-	if use fcitx; then
+	if use fcitx5; then
 		targets+=(unix/fcitx5/fcitx5.gyp:fcitx5-mozc)
 	fi
 	if use gui; then
@@ -251,12 +236,12 @@ src_install() {
 		elisp-site-file-install "${FILESDIR}/${SITEFILE}" mozc
 	fi
 
-	if use fcitx; then
+	if use fcitx5; then
 		for mofile in "out_linux/${BUILD_TYPE}/gen/unix/fcitx5/po/"*.mo; do
 			locale="${mofile##*/}"
 			locale="${locale%.mo}"
 			insinto /usr/share/locale/${locale}/LC_MESSAGES
-			newins "${mofile}" fcitx-mozc.mo
+			newins "${mofile}" fcitx5-mozc.mo
 		done
 
 		exeinto /usr/$(get_libdir)/fcitx5
@@ -311,18 +296,6 @@ pkg_postinst() {
 	elog "MOZC_CONFIGURATION_DIRECTORY"
 	elog "  Mozc configuration directory"
 	elog "  Value used by default: \"~/.mozc\""
-	if use gui; then
-		elog "MOZC_ZINNIA_MODEL_FILE"
-		elog "  Zinnia handwriting recognition model file"
-		if use handwriting-tegaki; then
-			elog "  Value used by default: \"${EPREFIX}/usr/share/tegaki/models/zinnia/handwriting-ja.model\""
-		elif use handwriting-tomoe; then
-			elog "  Value used by default: \"${EPREFIX}/usr/$(get_libdir)/zinnia/model/tomoe/handwriting-ja.model\""
-		fi
-		elog "  Potential values:"
-		elog "    \"${EPREFIX}/usr/share/tegaki/models/zinnia/handwriting-ja.model\""
-		elog "    \"${EPREFIX}/usr/$(get_libdir)/zinnia/model/tomoe/handwriting-ja.model\""
-	fi
 	elog
 	if use emacs; then
 		elog

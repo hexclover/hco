@@ -1,6 +1,6 @@
 --- /src/gyp/defines.gypi
 +++ /src/gyp/defines.gypi
-@@ -71,6 +71,12 @@
+@@ -63,6 +63,15 @@
      # use_libibus represents if ibus library is used or not.
      # This option is only for Linux.
      'use_libibus%': '0',
@@ -10,6 +10,9 @@
 +
 +    # use_libjsoncpp represents if jsoncpp library is used or not.
 +    'use_libjsoncpp%': '0',
++
++    # use_libabseilcpp represents if abseilcpp library is used or not.
++    'use_libabseilcpp%': '0',
    },
    'target_defaults': {
      'defines': [
@@ -111,7 +114,7 @@
  
 --- /src/testing/testing.gyp
 +++ /src/testing/testing.gyp
-@@ -53,66 +53,101 @@
+@@ -59,48 +59,6 @@
    'targets': [
      {
        'target_name': 'testing',
@@ -123,19 +126,6 @@
 -        ],
 -        'gtest_dir': '<(third_party_dir)/gtest/googletest',
 -        'gmock_dir': '<(third_party_dir)/gtest/googlemock',
--        'conditions': [
--          ['_toolset=="target" and target_platform=="Android"', {
--            'gtest_defines': [
--              'GTEST_HAS_RTTI=0',  # Android NDKr7 requires this.
--              'GTEST_HAS_CLONE=0',
--              'GTEST_HAS_GLOBAL_WSTRING=0',
--              'GTEST_HAS_POSIX_RE=0',
--              'GTEST_HAS_STD_WSTRING=0',
--              'GTEST_OS_LINUX=1',
--              'GTEST_OS_LINUX_ANDROID=1',
--            ],
--          }],
--        ],
 -      },
 -      'sources': [
 -        '<(gmock_dir)/src/gmock-cardinalities.cc',
@@ -145,6 +135,7 @@
 -        '<(gmock_dir)/src/gmock.cc',
 -        '<(gtest_dir)/src/gtest-death-test.cc',
 -        '<(gtest_dir)/src/gtest-filepath.cc',
+-        '<(gtest_dir)/src/gtest-matchers.cc',
 -        '<(gtest_dir)/src/gtest-port.cc',
 -        '<(gtest_dir)/src/gtest-printers.cc',
 -        '<(gtest_dir)/src/gtest-test-part.cc',
@@ -170,30 +161,18 @@
 -        ],
 -      },
        'conditions': [
--        ['(_toolset=="target" and compiler_target=="clang") or '
--         '(_toolset=="host" and compiler_host=="clang")', {
--          'cflags': [
--            '-Wno-missing-field-initializers',
--            '-Wno-unused-private-field',
+         ['(_toolset=="target" and compiler_target=="clang") or '
+          '(_toolset=="host" and compiler_host=="clang")', {
+@@ -109,6 +67,67 @@
+             '-Wno-unused-private-field',
+           ],
+         }],
 +        ['use_libgtest==1', {
 +          'type': 'none',
 +          'variables': {
 +            'gtest_defines': [
 +              'GTEST_LANG_CXX11=1',
 +              'GTEST_HAS_TR1_TUPLE=0',  # disable tr1 tuple in favor of C++11 tuple.
-+            ],
-+            'conditions': [
-+              ['_toolset=="target" and target_platform=="Android"', {
-+                'gtest_defines': [
-+                  'GTEST_HAS_RTTI=0',  # Android NDKr7 requires this.
-+                  'GTEST_HAS_CLONE=0',
-+                  'GTEST_HAS_GLOBAL_WSTRING=0',
-+                  'GTEST_HAS_POSIX_RE=0',
-+                  'GTEST_HAS_STD_WSTRING=0',
-+                  'GTEST_OS_LINUX=1',
-+                  'GTEST_OS_LINUX_ANDROID=1',
-+                ],
-+              }],
 +            ],
 +          },
 +          'all_dependent_settings': {
@@ -215,19 +194,6 @@
 +            ],
 +            'gtest_dir': '<(third_party_dir)/gtest/googletest',
 +            'gmock_dir': '<(third_party_dir)/gtest/googlemock',
-+            'conditions': [
-+              ['_toolset=="target" and target_platform=="Android"', {
-+                'gtest_defines': [
-+                  'GTEST_HAS_RTTI=0',  # Android NDKr7 requires this.
-+                  'GTEST_HAS_CLONE=0',
-+                  'GTEST_HAS_GLOBAL_WSTRING=0',
-+                  'GTEST_HAS_POSIX_RE=0',
-+                  'GTEST_HAS_STD_WSTRING=0',
-+                  'GTEST_OS_LINUX=1',
-+                  'GTEST_OS_LINUX_ANDROID=1',
-+                ],
-+              }],
-+            ],
 +          },
 +          'sources': [
 +            '<(gmock_dir)/src/gmock-cardinalities.cc',
@@ -260,15 +226,189 @@
 +              '<(gmock_dir)/include',
 +              '<(gtest_dir)/include',
 +            ],
-+          },
-+          'conditions': [
-+            ['(_toolset=="target" and compiler_target=="clang") or '
-+             '(_toolset=="host" and compiler_host=="clang")', {
-+              'cflags': [
-+                '-Wno-missing-field-initializers',
-+                '-Wno-unused-private-field',
-+              ],
-+            }],
-           ],
-         }],
++          }
++        }],
        ],
+     },
+     {
+
+--- /src/base/absl.gyp
++++ /src/base/absl.gyp
+@@ -35,80 +35,133 @@
+   'targets': [
+     {
+       'target_name': 'absl_base',
+-      'type': 'static_library',
+       'toolsets': ['host', 'target'],
+-      'sources': [
+-        '<(absl_srcdir)/base/internal/cycleclock.cc',
+-        '<(absl_srcdir)/base/internal/low_level_alloc.cc',
+-        '<(absl_srcdir)/base/internal/raw_logging.cc',
+-        '<(absl_srcdir)/base/internal/spinlock.cc',
+-        '<(absl_srcdir)/base/internal/spinlock_wait.cc',
+-        '<(absl_srcdir)/base/internal/sysinfo.cc',
+-        '<(absl_srcdir)/base/internal/thread_identity.cc',
+-        '<(absl_srcdir)/base/internal/throw_delegate.cc',
+-        '<(absl_srcdir)/base/internal/unscaledcycleclock.cc',
+-      ],
+       'msvs_disabled_warnings': [
+         # 'type' : forcing value to bool 'true' or 'false'
+         # (performance warning)
+         # http://msdn.microsoft.com/en-us/library/b6801kcy.aspx
+         '4800',
+       ],
++      'conditions': [
++        ['use_libabseilcpp==1', {
++          'type': 'none',
++          'all_dependent_settings': {
++             'link_settings': {
++               'libraries': [
++                 '-labsl_base',
++               ],
++             },
++          },
++        }, {
++          'type': 'static_library',
++          'sources': [
++            '<(absl_srcdir)/base/internal/cycleclock.cc',
++            '<(absl_srcdir)/base/internal/low_level_alloc.cc',
++            '<(absl_srcdir)/base/internal/raw_logging.cc',
++            '<(absl_srcdir)/base/internal/spinlock.cc',
++            '<(absl_srcdir)/base/internal/spinlock_wait.cc',
++            '<(absl_srcdir)/base/internal/sysinfo.cc',
++            '<(absl_srcdir)/base/internal/thread_identity.cc',
++            '<(absl_srcdir)/base/internal/throw_delegate.cc',
++            '<(absl_srcdir)/base/internal/unscaledcycleclock.cc',
++          ]
++        }]
++      ]
+     },
+     {
+       'target_name': 'absl_numeric',
+-      'type': 'static_library',
+-      'toolsets': ['host', 'target'],
+-      'sources': [
+-        '<(absl_srcdir)/numeric/int128.cc',
+-      ],
+       'dependencies': [
+         'absl_base',
+       ],
++      'toolsets': ['host', 'target'],
++      'conditions': [
++        ['use_libabseilcpp==1', {
++          'type': 'none',
++          'all_dependent_settings': {
++             'link_settings': {
++               'libraries': [
++                 '-labsl_int128',
++               ],
++             },
++          },
++        }, {
++          'type': 'static_library',
++          'sources': [
++            '<(absl_srcdir)/numeric/int128.cc',
++          ],
++        }],
++      ]
+     },
+     {
+       'target_name': 'absl_strings_internal',
+-      'type': 'static_library',
+       'toolsets': ['host', 'target'],
+-      'sources': [
+-        '<(absl_srcdir)/strings/internal/charconv_bigint.cc',
+-        '<(absl_srcdir)/strings/internal/charconv_parse.cc',
+-        '<(absl_srcdir)/strings/internal/escaping.cc',
+-        '<(absl_srcdir)/strings/internal/memutil.cc',
+-        '<(absl_srcdir)/strings/internal/str_format/arg.cc',
+-        '<(absl_srcdir)/strings/internal/str_format/bind.cc',
+-        '<(absl_srcdir)/strings/internal/str_format/extension.cc',
+-        '<(absl_srcdir)/strings/internal/str_format/float_conversion.cc',
+-        '<(absl_srcdir)/strings/internal/str_format/output.cc',
+-        '<(absl_srcdir)/strings/internal/str_format/parser.cc',
+-        '<(absl_srcdir)/strings/internal/utf8.cc',
+-      ],
+       'dependencies': [
+         'absl_base',
+         'absl_numeric',
+       ],
++      'conditions': [
++        ['use_libabseilcpp==1', {
++          'type': 'none',
++          'all_dependent_settings': {
++             'link_settings': {
++               'libraries': [
++                 '-labsl_strings_internal',
++		  '-labsl_str_format_internal',
++               ],
++             },
++          },
++        }, {
++          'type': 'static_library',
++          'sources': [
++            '<(absl_srcdir)/strings/internal/charconv_bigint.cc',
++            '<(absl_srcdir)/strings/internal/charconv_parse.cc',
++            '<(absl_srcdir)/strings/internal/escaping.cc',
++            '<(absl_srcdir)/strings/internal/memutil.cc',
++            '<(absl_srcdir)/strings/internal/str_format/arg.cc',
++            '<(absl_srcdir)/strings/internal/str_format/bind.cc',
++            '<(absl_srcdir)/strings/internal/str_format/extension.cc',
++            '<(absl_srcdir)/strings/internal/str_format/float_conversion.cc',
++            '<(absl_srcdir)/strings/internal/str_format/output.cc',
++            '<(absl_srcdir)/strings/internal/str_format/parser.cc',
++            '<(absl_srcdir)/strings/internal/utf8.cc',
++          ],
++        }],
++      ],
+     },
+     {
+       'target_name': 'absl_strings',
+-      'type': 'static_library',
+       'toolsets': ['host', 'target'],
+-      'sources': [
+-        '<(absl_srcdir)/strings/ascii.cc',
+-        '<(absl_srcdir)/strings/charconv.cc',
+-        '<(absl_srcdir)/strings/escaping.cc',
+-        '<(absl_srcdir)/strings/match.cc',
+-        '<(absl_srcdir)/strings/numbers.cc',
+-        '<(absl_srcdir)/strings/str_cat.cc',
+-        '<(absl_srcdir)/strings/str_replace.cc',
+-        '<(absl_srcdir)/strings/str_split.cc',
+-        '<(absl_srcdir)/strings/string_view.cc',
+-        '<(absl_srcdir)/strings/substitute.cc',
+-      ],
+       'dependencies': [
+         'absl_base',
+         'absl_numeric',
+         'absl_strings_internal',
+       ],
++      'conditions': [
++        ['use_libabseilcpp==1', {
++          'type': 'none',
++          'all_dependent_settings': {
++             'link_settings': {
++               'libraries': [
++                 '-labsl_strings',
++               ],
++             },
++          },
++        }, {
++          'type': 'static_library',
++          'sources': [
++            '<(absl_srcdir)/strings/ascii.cc',
++            '<(absl_srcdir)/strings/charconv.cc',
++            '<(absl_srcdir)/strings/escaping.cc',
++            '<(absl_srcdir)/strings/match.cc',
++            '<(absl_srcdir)/strings/numbers.cc',
++            '<(absl_srcdir)/strings/str_cat.cc',
++            '<(absl_srcdir)/strings/str_replace.cc',
++            '<(absl_srcdir)/strings/str_split.cc',
++            '<(absl_srcdir)/strings/string_view.cc',
++            '<(absl_srcdir)/strings/substitute.cc',
++          ],
++        }],
++      ],
+     },
+   ],
+ }

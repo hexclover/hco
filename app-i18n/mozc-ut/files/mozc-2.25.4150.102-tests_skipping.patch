@@ -2,15 +2,13 @@ Disable test leaving mozc_server orphan process.
 
 --- /src/unix/ibus/mozc_engine_test.cc
 +++ /src/unix/ibus/mozc_engine_test.cc
-@@ -41,65 +41,5 @@
+@@ -41,61 +41,5 @@
  namespace mozc {
  namespace ibus {
  
 -class LaunchToolTest : public testing::Test {
 - public:
--  LaunchToolTest() {
--    g_type_init();
--  }
+-  LaunchToolTest() { g_type_init(); }
 -
 - protected:
 -  virtual void SetUp() {
@@ -21,9 +19,7 @@ Disable test leaving mozc_server orphan process.
 -    mozc_engine_->client_.reset(mock_);
 -  }
 -
--  virtual void TearDown() {
--    mozc_engine_.reset();
--  }
+-  virtual void TearDown() { mozc_engine_.reset(); }
 -
 -  client::ClientMock* mock_;
 -  unique_ptr<MozcEngine> mozc_engine_;
