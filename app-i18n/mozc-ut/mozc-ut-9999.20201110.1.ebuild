@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
-PYTHON_COMPAT=(python{3_7,3_8})
+PYTHON_COMPAT=(python{3_7,3_8,3_9})
 
 inherit elisp-common multiprocessing python-any-r1 toolchain-funcs git-r3
 
@@ -33,6 +33,7 @@ RESTRICT="!test? ( test )"
 SRC_URI="https://osdn.net/users/utuhiro/pf/utuhiro/dl/${UT_PF}.tar.bz2"
 
 BDEPEND="${PYTHON_DEPS}
+	$(python_gen_any_dep 'dev-python/six[${PYTHON_USEDEP}]')
 	>=dev-libs/protobuf-3.0.0
 	dev-util/gyp
 	dev-util/ninja
@@ -74,6 +75,10 @@ S="${WORKDIR}/${P}/src"
 UT_S="${WORKDIR}/${UT_PF}"
 
 SITEFILE="50${MY_PN}-gentoo.el"
+
+python_check_deps() {
+	has_version "dev-python/six[${PYTHON_USEDEP}]"
+}
 
 execute() {
 	einfo "$@"
