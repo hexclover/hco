@@ -13,12 +13,11 @@ KEYWORDS="~amd64"
 
 SRC_URI="mirror://sourceforge/${PN}/${PN}-${PV}/${PN}-${PV}.tar.bz2"
 
-IUSE="doc freetype jpeg pdf png +postscript svg tiff vlc xine"
+IUSE="doc examples freetype jpeg pdf png +postscript svg tiff vlc xine"
 
 BDEPEND="
 	>=dev-lang/perl-5.8
 "
-
 DEPEND="
 	x11-libs/libX11
 	freetype? ( media-libs/freetype )
@@ -34,8 +33,10 @@ DEPEND="
 	tiff? ( media-libs/tiff )
 	xine? ( media-libs/xine-lib )
 "
-RDEPEND="${DEPEND}
-${BDEPEND}"
+RDEPEND="
+	${BDEPEND}
+	${DEPEND}
+"
 
 use_em() {
 	default
@@ -48,8 +49,7 @@ use_em() {
 	fi
 	if use "!$1"; then
 		local fn="makers/${mkn}.maker.pm"
-		rm "${fn}" || die
-		einfo "Removed ${fn} because of -$1"
+		rm "${fn}" || die "Could not remove ${fn} despite -$1 set"
 	fi
 }
 
@@ -79,19 +79,27 @@ src_install() {
 
 	cd "${ED}/${em_dir}"
 
-	if use !doc; then
-		rm -r ./doc || die
+	if use examples; then
+		dodoc -r ./doc/examples
+		docompress -x /usr/share/doc/${PF}/examples
 	fi
+	if use doc; then
+		dodoc -r ./doc/html
+		dodoc -r ./doc/ps
+		docompress -x /usr/share/doc/${PF}/ps
+	fi
+	rm -r ./doc || die
+	dosym "${EPREFIX}/usr/share/doc/${PF}" "${em_dir}"/doc
 
 	for siz in 32 48 96; do
 		doicon ./res/icons/"${PN}${siz}".png -s ${siz}
 	done
 	mv res "${ED}"/usr/share/eaglemode || die
-	dosym /usr/share/eaglemode "${em_dir}"/res
+	dosym "${EPREFIX}"/usr/share/eaglemode "${em_dir}"/res
 
 	mkdir -p "${ED}"/etc || die
 	mv etc "${ED}"/etc/eaglemode || die
-	dosym /etc/eaglemode "${em_dir}"/etc
+	dosym "${EPREFIX}"/etc/eaglemode "${em_dir}"/etc
 
 	ln -rs ./lib/*.so "${ED}"/usr/lib || die
 
@@ -105,8 +113,9 @@ src_install() {
 }
 
 pkg_postinst() {
-	elog "To work with extra file formats, some additional packages may need to be installed."
+	elog "To work with certain file formats, some additional packages may need to be installed."
 	elog "See http://eaglemode.sourceforge.net/SystemRequirements.html for a list."
+	elog "This file is also installed as /usr/share/doc/${PF}/html/SystemRequirements.html if you have USE doc enabled."
 	xdg_icon_cache_update
 	xdg_desktop_database_update
 }
