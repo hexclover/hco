@@ -91,8 +91,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-system_libraries.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-environmental_variables.patch"
+	eapply -p2 "${FILESDIR}/mozc-2.26.4206.100-system_libraries.patch"
 	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-server_path_check.patch"
 	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-tests_skipping.patch"
 	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-use-custom-toolchain.patch"
@@ -242,12 +241,17 @@ src_install() {
 	fi
 
 	if use fcitx5; then
-		for mofile in "out_linux/${BUILD_TYPE}/gen/unix/fcitx5/po/"*.mo; do
-			locale="${mofile##*/}"
-			locale="${locale%.mo}"
-			insinto /usr/share/locale/${locale}/LC_MESSAGES
-			newins "${mofile}" fcitx5-mozc.mo
+		local po_dir="unix/fcitx5/po"
+		local pofile
+		local mofile
+		for pofile in "${po_dir}"/*.po; do
+			local locale
+			locale="${pofile##*/}"
+			locale="${locale%.po}"
+			mofile="${po_dir}/${locale}.mo"
+			msgfmt "${pofile}" -o "${mofile}"
 		done
+		MOPREFIX="fcitx5-mozc" domo "${po_dir}"/*.mo
 
 		exeinto /usr/$(get_libdir)/fcitx5
 		doexe out_linux/${BUILD_TYPE}/fcitx5-mozc.so

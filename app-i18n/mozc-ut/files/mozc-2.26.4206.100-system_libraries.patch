@@ -234,12 +234,12 @@
 
 --- /src/base/absl.gyp
 +++ /src/base/absl.gyp
-@@ -35,80 +35,133 @@
+@@ -35,113 +35,182 @@
    'targets': [
      {
        'target_name': 'absl_base',
 -      'type': 'static_library',
-       'toolsets': ['host', 'target'],
+-      'toolsets': ['host', 'target'],
 -      'sources': [
 -        '<(absl_srcdir)/base/internal/cycleclock.cc',
 -        '<(absl_srcdir)/base/internal/low_level_alloc.cc',
@@ -250,7 +250,11 @@
 -        '<(absl_srcdir)/base/internal/thread_identity.cc',
 -        '<(absl_srcdir)/base/internal/throw_delegate.cc',
 -        '<(absl_srcdir)/base/internal/unscaledcycleclock.cc',
+-        '<(absl_srcdir)/container/internal/raw_hash_set.cc',
+-        '<(absl_srcdir)/hash/internal/city.cc',
+-        '<(absl_srcdir)/hash/internal/hash.cc',
 -      ],
++      'toolsets': ['host', 'target'],
        'msvs_disabled_warnings': [
          # 'type' : forcing value to bool 'true' or 'false'
          # (performance warning)
@@ -264,6 +268,8 @@
 +             'link_settings': {
 +               'libraries': [
 +                 '-labsl_base',
++                 '-labsl_city',
++                 '-labsl_hash',
 +               ],
 +             },
 +          },
@@ -279,6 +285,9 @@
 +            '<(absl_srcdir)/base/internal/thread_identity.cc',
 +            '<(absl_srcdir)/base/internal/throw_delegate.cc',
 +            '<(absl_srcdir)/base/internal/unscaledcycleclock.cc',
++            '<(absl_srcdir)/container/internal/raw_hash_set.cc',
++            '<(absl_srcdir)/hash/internal/city.cc',
++            '<(absl_srcdir)/hash/internal/hash.cc',
 +          ]
 +        }]
 +      ]
@@ -290,9 +299,12 @@
 -      'sources': [
 -        '<(absl_srcdir)/numeric/int128.cc',
 -      ],
-       'dependencies': [
-         'absl_base',
-       ],
+-      'dependencies': [
+-        'absl_base',
+-      ],
++      'dependencies': [
++        'absl_base',
++      ],
 +      'toolsets': ['host', 'target'],
 +      'conditions': [
 +        ['use_libabseilcpp==1', {
@@ -315,7 +327,7 @@
      {
        'target_name': 'absl_strings_internal',
 -      'type': 'static_library',
-       'toolsets': ['host', 'target'],
+-      'toolsets': ['host', 'target'],
 -      'sources': [
 -        '<(absl_srcdir)/strings/internal/charconv_bigint.cc',
 -        '<(absl_srcdir)/strings/internal/charconv_parse.cc',
@@ -329,6 +341,7 @@
 -        '<(absl_srcdir)/strings/internal/str_format/parser.cc',
 -        '<(absl_srcdir)/strings/internal/utf8.cc',
 -      ],
++      'toolsets': ['host', 'target'],
        'dependencies': [
          'absl_base',
          'absl_numeric',
@@ -340,7 +353,7 @@
 +             'link_settings': {
 +               'libraries': [
 +                 '-labsl_strings_internal',
-+		  '-labsl_str_format_internal',
++		 '-labsl_str_format_internal',
 +               ],
 +             },
 +          },
@@ -365,7 +378,7 @@
      {
        'target_name': 'absl_strings',
 -      'type': 'static_library',
-       'toolsets': ['host', 'target'],
+-      'toolsets': ['host', 'target'],
 -      'sources': [
 -        '<(absl_srcdir)/strings/ascii.cc',
 -        '<(absl_srcdir)/strings/charconv.cc',
@@ -378,6 +391,7 @@
 -        '<(absl_srcdir)/strings/string_view.cc',
 -        '<(absl_srcdir)/strings/substitute.cc',
 -      ],
++      'toolsets': ['host', 'target'],
        'dependencies': [
          'absl_base',
          'absl_numeric',
@@ -410,5 +424,72 @@
 +        }],
 +      ],
      },
+     {
+       'target_name': 'absl_time',
+-      'type': 'static_library',
+-      'toolsets': ['host', 'target'],
+-      'sources': [
+-        '<(absl_srcdir)/time/civil_time.cc',
+-        '<(absl_srcdir)/time/clock.cc',
+-        '<(absl_srcdir)/time/duration.cc',
+-        '<(absl_srcdir)/time/format.cc',
+-        '<(absl_srcdir)/time/time.cc',
+-        '<(absl_srcdir)/time/internal/cctz/src/civil_time_detail.cc',
+-        '<(absl_srcdir)/time/internal/cctz/src/time_zone_fixed.cc',
+-        '<(absl_srcdir)/time/internal/cctz/src/time_zone_format.cc',
+-        '<(absl_srcdir)/time/internal/cctz/src/time_zone_if.cc',
+-        '<(absl_srcdir)/time/internal/cctz/src/time_zone_impl.cc',
+-        '<(absl_srcdir)/time/internal/cctz/src/time_zone_info.cc',
+-        '<(absl_srcdir)/time/internal/cctz/src/time_zone_libc.cc',
+-        '<(absl_srcdir)/time/internal/cctz/src/time_zone_lookup.cc',
+-        '<(absl_srcdir)/time/internal/cctz/src/time_zone_posix.cc',
+-        '<(absl_srcdir)/time/internal/cctz/src/zone_info_source.cc',
+-      ],
+-      'cflags': [
+-        '-Wno-error',
+-      ],
++      'toolsets': ['host', 'target'],
+       'dependencies': [
+         'absl_base',
+         'absl_numeric',
+         'absl_strings_internal',
+       ],
++      'conditions': [
++        ['use_libabseilcpp==1', {
++          'type': 'none',
++          'all_dependent_settings': {
++             'link_settings': {
++               'libraries': [
++                 '-labsl_time',
++                 '-labsl_time_zone',
++               ],
++             },
++          },
++        }, {
++          'type': 'static_library',
++          'sources': [
++            '<(absl_srcdir)/time/civil_time.cc',
++            '<(absl_srcdir)/time/clock.cc',
++            '<(absl_srcdir)/time/duration.cc',
++            '<(absl_srcdir)/time/format.cc',
++            '<(absl_srcdir)/time/time.cc',
++            '<(absl_srcdir)/time/internal/cctz/src/civil_time_detail.cc',
++            '<(absl_srcdir)/time/internal/cctz/src/time_zone_fixed.cc',
++            '<(absl_srcdir)/time/internal/cctz/src/time_zone_format.cc',
++            '<(absl_srcdir)/time/internal/cctz/src/time_zone_if.cc',
++            '<(absl_srcdir)/time/internal/cctz/src/time_zone_impl.cc',
++            '<(absl_srcdir)/time/internal/cctz/src/time_zone_info.cc',
++            '<(absl_srcdir)/time/internal/cctz/src/time_zone_libc.cc',
++            '<(absl_srcdir)/time/internal/cctz/src/time_zone_lookup.cc',
++            '<(absl_srcdir)/time/internal/cctz/src/time_zone_posix.cc',
++            '<(absl_srcdir)/time/internal/cctz/src/zone_info_source.cc',
++          ],
++          'cflags': [
++            '-Wno-error',
++          ],
++        }],
++      ],
+     },
    ],
  }
+
