@@ -1,0 +1,16 @@
+BDEPEND=|| ( dev-lang/python:3.9 dev-lang/python:3.8 dev-lang/python:3.7 ) || ( ( dev-lang/python:3.9 dev-python/six[python_targets_python3_9(-),python_single_target_python3_9(+)] ) ( dev-lang/python:3.8 dev-python/six[python_targets_python3_8(-),python_single_target_python3_8(+)] ) ( dev-lang/python:3.7 dev-python/six[python_targets_python3_7(-),python_single_target_python3_7(+)] ) ) >=dev-libs/protobuf-3.0.0 dev-util/gyp dev-util/ninja virtual/pkgconfig emacs? ( app-editors/emacs:* ) fcitx5? ( sys-devel/gettext ) >=dev-vcs/git-1.8.2.1[curl]
+DEFINED_PHASES=compile configure install postinst postrm prepare setup test unpack
+DEPEND=!app-i18n/mozc >=dev-cpp/abseil-cpp-20200923.2[cxx17] >=dev-libs/protobuf-3.0.0:= emacs? ( app-editors/emacs:* ) fcitx5? ( app-i18n/fcitx5 virtual/libintl ) gui? ( dev-qt/qtcore:5 dev-qt/qtgui:5 dev-qt/qtwidgets:5 ) ibus? ( >=app-i18n/ibus-1.4.1 dev-libs/glib:2 x11-libs/libxcb ) renderer? ( dev-libs/glib:2 x11-libs/cairo x11-libs/gtk+:2 x11-libs/pango ) test? ( >=dev-cpp/gtest-1.8.0 dev-libs/jsoncpp )
+DESCRIPTION=Mozc + UT Dictionary
+EAPI=7
+HOMEPAGE=https://github.com/fcitx/mozc http://linuxplayers.g1.xrea.com/mozc-ut.html https://github.com/google/mozc
+IUSE=debug emacs fcitx5 +gui ibus renderer test
+LICENSE=BSD BSD-2 ipadic public-domain unicode CC-BY-SA-3.0 Apache-2.0 public-domain
+PROPERTIES=live
+RDEPEND=!app-i18n/mozc >=dev-cpp/abseil-cpp-20200923.2[cxx17] >=dev-libs/protobuf-3.0.0:= emacs? ( app-editors/emacs:* ) fcitx5? ( app-i18n/fcitx5 virtual/libintl ) gui? ( dev-qt/qtcore:5 dev-qt/qtgui:5 dev-qt/qtwidgets:5 ) ibus? ( >=app-i18n/ibus-1.4.1 dev-libs/glib:2 x11-libs/libxcb ) renderer? ( dev-libs/glib:2 x11-libs/cairo x11-libs/gtk+:2 x11-libs/pango )
+REQUIRED_USE=|| ( emacs fcitx5 ibus )
+RESTRICT=!test? ( test )
+SLOT=0
+SRC_URI=https://osdn.net/users/utuhiro/pf/utuhiro/dl/mozcdic-ut-20201129.1.tar.bz2
+_eclasses_=elisp-common	34cc2b6f6d8914019a353fe39cff43ce	git-r3	3e7ec3d6619213460c85e2aa48398441	multilib	d410501a125f99ffb560b0c523cd3d1e	multiprocessing	cac3169468f893670dac3e7cb940e045	python-any-r1	54a3178500786b0a7ede4a23b7f2a6ad	python-utils-r1	e41e32d357e5bdd388b5be2ce24f3883	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
+_md5_=9631bef4945137cca5419976b62cbf9a

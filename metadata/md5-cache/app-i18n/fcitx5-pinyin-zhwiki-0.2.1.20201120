@@ -1,0 +1,11 @@
+DEFINED_PHASES=install prepare unpack
+DEPEND=app-i18n/fcitx5
+DESCRIPTION=Fcitx 5 dictionary generated from Chinese wikipedia
+EAPI=7
+HOMEPAGE=https://github.com/felixonmars/fcitx5-pinyin-zhwiki
+KEYWORDS=~amd64
+LICENSE=Unlicense
+RDEPEND=app-i18n/fcitx5
+SLOT=0
+SRC_URI=https://github.com/felixonmars/fcitx5-pinyin-zhwiki/releases/download/0.2.1/zhwiki-20201120.dict -> fcitx5-pinyin-zhwiki-0.2.1.20201120.dict
+_md5_=9763266f1ab1d1c61c72e27ed0740c7f

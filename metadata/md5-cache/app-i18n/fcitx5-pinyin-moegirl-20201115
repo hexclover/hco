@@ -1,0 +1,11 @@
+DEFINED_PHASES=install prepare unpack
+DEPEND=app-i18n/fcitx5
+DESCRIPTION=Fcitx 5 dictionary generated from moegirl.org.cn
+EAPI=7
+HOMEPAGE=https://github.com/outloudvi/mw2fcitx
+KEYWORDS=~amd64
+LICENSE=Unlicense
+RDEPEND=app-i18n/fcitx5
+SLOT=0
+SRC_URI=https://github.com/outloudvi/mw2fcitx/releases/download/20201115/moegirl.dict -> fcitx5-pinyin-moegirl-20201115.dict
+_md5_=c2f8c6a15fd6dde394e59000ae3cd429
