@@ -9,5 +9,5 @@ LICENSE=OFL-1.1
 RESTRICT=binchecks mirror strip
 SLOT=0
 SRC_URI=https://github.com/rsms/inter/releases/download/v3.15/Inter-3.15.zip
-_eclasses_=font	dd073b36fe3fd8b868c23bc23209db45
+_eclasses_=font	e052246186f22bd6a37797238374613b
 _md5_=741dc0a538019dd751ad4d5f3cfaa892
