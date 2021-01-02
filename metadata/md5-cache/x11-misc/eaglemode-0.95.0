@@ -10,5 +10,5 @@ LICENSE=GPL-3
 RDEPEND=>=dev-lang/perl-5.8 x11-libs/libX11 freetype? ( media-libs/freetype ) jpeg? ( media-libs/libjpeg-turbo ) pdf? ( app-text/poppler x11-libs/gtk+:2 ) png? ( media-libs/libpng ) postscript? ( app-text/ghostscript-gpl ) svg? ( gnome-base/librsvg ) vlc? ( media-video/vlc ) tiff? ( media-libs/tiff ) xine? ( media-libs/xine-lib )
 SLOT=0
 SRC_URI=mirror://sourceforge/eaglemode/eaglemode-0.95.0/eaglemode-0.95.0.tar.bz2
-_eclasses_=desktop	8f9bfcc33705104f56748d9dedb3177a	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
+_eclasses_=desktop	7fd20552ce4cc97e8acb132a499a7dd8	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
 _md5_=6a282e2174a14a575cac0cf4e6ee3066

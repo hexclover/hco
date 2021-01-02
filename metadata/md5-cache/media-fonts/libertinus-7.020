@@ -9,5 +9,5 @@ LICENSE=OFL-1.1
 RESTRICT=binchecks mirror strip
 SLOT=0
 SRC_URI=https://github.com/alerque/libertinus/releases/download/v7.020/Libertinus-7.020.tar.xz -> libertinus-7.020.tar.xz
-_eclasses_=font	e052246186f22bd6a37797238374613b
+_eclasses_=font	dd073b36fe3fd8b868c23bc23209db45
 _md5_=0e6c75350e25da03d990041d21d3e1e9
