@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
-PYTHON_COMPAT=(python{3_7,3_8,3_9})
+PYTHON_COMPAT=(python{3_8,3_9})
 
 inherit elisp-common multiprocessing python-any-r1 toolchain-funcs git-r3
 
@@ -76,13 +76,13 @@ UT_S="${WORKDIR}/${UT_PF}"
 
 SITEFILE="50${MY_PN}-gentoo.el"
 
-python_check_deps() {
-	has_version "dev-python/six[${PYTHON_USEDEP}]"
-}
-
 execute() {
 	einfo "$@"
 	"$@"
+}
+
+python_check_deps() {
+	has_version -b "dev-python/six[${PYTHON_USEDEP}]"
 }
 
 src_unpack() {
@@ -94,7 +94,6 @@ src_prepare() {
 	eapply -p2 "${FILESDIR}/mozc-2.26.4206.100-system_libraries.patch"
 	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-server_path_check.patch"
 	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-tests_skipping.patch"
-	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-use-custom-toolchain.patch"
 
 	rm -r unix/fcitx || die
 
@@ -106,17 +105,12 @@ src_prepare() {
 		-e "s/RunOrDie(\[ninja/&, '-j$(makeopts_jobs)', '-l$(makeopts_loadavg "${MAKEOPTS}" 0)', '-v'/" \
 		-i build_mozc.py || die
 
-	sed \
-		-e "s/'release_extra_cflags%': \['-O2'\]/'release_extra_cflags%': []/" \
-		-e "s/'debug_extra_cflags%': \['-O0', '-g'\]/'debug_extra_cflags%': []/" \
-		-i gyp/common.gypi || die
-
 	local ar=($(tc-getAR))
 	local cc=($(tc-getCC))
 	local cxx=($(tc-getCXX))
 	local ld=($(tc-getLD))
 	local nm=($(tc-getNM))
-	local readelf=($(tc-getPROG READELF readelf))
+	local readelf=($(tc-getREADELF))
 
 	# Use absolute paths. Non-absolute paths are mishandled by GYP.
 	ar[0]=$(type -P ${ar[0]})
@@ -141,6 +135,12 @@ src_prepare() {
 		einfo "Appending $f"
 		cat "$f" >> ./data/dictionary_oss/dictionary00.txt || die
 	done
+
+	# https://github.com/google/mozc/issues/489
+	sed \
+		-e "/'-lc++'/d" \
+		-e "/'-stdlib=libc++'/d" \
+		-i gyp/common.gypi || die
 }
 
 src_configure() {
@@ -160,11 +160,14 @@ src_configure() {
 		gyp_arguments+=(-D compiler_host=unknown -D compiler_target=unknown)
 	fi
 
+	gyp_arguments+=(-D debug_extra_cflags=)
+	gyp_arguments+=(-D release_extra_cflags=)
+
 	gyp_arguments+=(-D use_fcitx=NO)
 	gyp_arguments+=(-D use_fcitx5=$(usex fcitx5 YES NO))
+	gyp_arguments+=(-D use_libibus=$(usex ibus 1 0))
 	gyp_arguments+=(-D use_libabseilcpp=1)
 	gyp_arguments+=(-D use_libgtest=$(usex test 1 0))
-	gyp_arguments+=(-D use_libibus=$(usex ibus 1 0))
 	gyp_arguments+=(-D use_libjsoncpp=$(usex test 1 0))
 	gyp_arguments+=(-D use_libprotobuf=1)
 	gyp_arguments+=(-D enable_gtk_renderer=$(usex renderer 1 0))
