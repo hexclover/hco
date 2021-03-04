@@ -7,5 +7,5 @@ KEYWORDS=~amd64
 LICENSE=Unlicense
 RDEPEND=app-i18n/fcitx5
 SLOT=0
-SRC_URI=https://github.com/outloudvi/mw2fcitx/releases/download/20201115/moegirl.dict -> fcitx5-pinyin-moegirl-20201115.dict
+SRC_URI=https://github.com/outloudvi/mw2fcitx/releases/download/20210217/moegirl.dict -> fcitx5-pinyin-moegirl-20210217.dict
 _md5_=c2f8c6a15fd6dde394e59000ae3cd429

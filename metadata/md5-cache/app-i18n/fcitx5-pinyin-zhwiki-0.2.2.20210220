@@ -7,5 +7,5 @@ KEYWORDS=~amd64
 LICENSE=Unlicense
 RDEPEND=app-i18n/fcitx5
 SLOT=0
-SRC_URI=https://github.com/felixonmars/fcitx5-pinyin-zhwiki/releases/download/0.2.2/zhwiki-20210101.dict -> fcitx5-pinyin-zhwiki-0.2.2.20210101.dict
+SRC_URI=https://github.com/felixonmars/fcitx5-pinyin-zhwiki/releases/download/0.2.2/zhwiki-20210220.dict -> fcitx5-pinyin-zhwiki-0.2.2.20210220.dict
 _md5_=9763266f1ab1d1c61c72e27ed0740c7f

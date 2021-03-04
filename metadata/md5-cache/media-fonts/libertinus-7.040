@@ -8,6 +8,6 @@ KEYWORDS=~amd64 ~x86
 LICENSE=OFL-1.1
 RESTRICT=binchecks mirror strip
 SLOT=0
-SRC_URI=https://github.com/alerque/libertinus/releases/download/v7.031/Libertinus-7.031.tar.xz -> libertinus-7.031.tar.xz
+SRC_URI=https://github.com/alerque/libertinus/releases/download/v7.040/Libertinus-7.040.tar.xz -> libertinus-7.040.tar.xz
 _eclasses_=font	dd073b36fe3fd8b868c23bc23209db45
 _md5_=0e6c75350e25da03d990041d21d3e1e9
