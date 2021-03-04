@@ -1,4 +1,4 @@
-# Copyright 2010-2020 Gentoo Authors
+# Copyright 2010-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
@@ -9,7 +9,15 @@ inherit elisp-common multiprocessing python-any-r1 toolchain-funcs git-r3
 EGIT_REPO_URI="https://github.com/fcitx/mozc"
 EGIT_SUBMODULES=(src/third_party/japanese_usage_dictionary)
 
-UT_V="${P#${PN}-[^.]*.}"
+if [ "$(ver_cut 1)" == "9999" ]; then
+	UT_V="$(ver_cut 2-)"
+	EGIT_COMMIT=""
+	KEYWORDS=""
+else
+	UT_V="$(ver_cut 5-)"
+	EGIT_COMMIT="76b760ee9fa50f1ce0acf1dead0d26a0cb549258"
+	KEYWORDS="~amd64"
+fi
 UT_PF="mozcdic-ut-${UT_V}"
 
 MY_PN="mozc"
@@ -25,7 +33,6 @@ LICENSE="BSD BSD-2 ipadic public-domain unicode"
 # From http://linuxplayers.g1.xrea.com/mozc-ut.html
 LICENSE+=" CC-BY-SA-3.0 Apache-2.0 public-domain"
 SLOT="0"
-KEYWORDS=""
 IUSE="debug emacs fcitx5 +gui ibus renderer test"
 REQUIRED_USE="|| ( emacs fcitx5 ibus )"
 RESTRICT="!test? ( test )"
@@ -91,7 +98,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	eapply -p2 "${FILESDIR}/mozc-2.26.4206.100-system_libraries.patch"
+	eapply -p2 "${FILESDIR}/mozc-2.26.4289.100-system_libraries.patch"
 	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-server_path_check.patch"
 	eapply -p2 "${FILESDIR}/mozc-2.25.4150.102-tests_skipping.patch"
 
